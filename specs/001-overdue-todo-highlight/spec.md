@@ -5,6 +5,14 @@
 **Status**: Draft  
 **Input**: User description: "Support for Overdue Todo Items — users need a clear, visual way to identify which todos have not been completed by their due date."
 
+## Clarifications
+
+### Session 2026-03-23
+
+- Q: What is the concrete visual form of the overdue indicator (affects markup, CSS, and test selectors)? → A: A small text badge reading "Overdue" in the Danger colour, displayed near the due date.
+- Q: What is the storage format of `dueDate` (affects comparison correctness in overdue logic)? → A: ISO 8601 date string (YYYY-MM-DD).
+- Q: Is overdue status re-evaluated reactively on every render, or only at page-load time (resolves wording inconsistency between FR-006/FR-007/FR-008)? → A: Reactive — overdue state is re-derived from `dueDate` and `isCompleted` on every render; page-load is the minimum guarantee, not the only trigger.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Visual Overdue Indicator (Priority: P1)
@@ -17,7 +25,7 @@ A user opens the todo list and can immediately tell, at a glance, which incomple
 
 **Acceptance Scenarios**:
 
-1. **Given** an incomplete todo with a due date of yesterday, **When** the user views the todo list, **Then** the todo displays a clear overdue indicator (visual styling and/or label).
+1. **Given** an incomplete todo with a due date of yesterday, **When** the user views the todo list, **Then** the todo displays a small "Overdue" text badge in the Danger colour near the due date.
 2. **Given** an incomplete todo with a due date of today, **When** the user views the todo list, **Then** the todo does NOT display an overdue indicator.
 3. **Given** an incomplete todo with a due date one month in the future, **When** the user views the todo list, **Then** the todo does NOT display an overdue indicator.
 4. **Given** an overdue todo, **When** the user marks it as complete, **Then** the overdue indicator disappears immediately.
@@ -70,9 +78,9 @@ A user who returns to the application on a later day sees that items which were 
 - **FR-001**: The system MUST display an overdue indicator on any incomplete todo item whose due date is strictly before the current date.
 - **FR-002**: The system MUST NOT display an overdue indicator on any completed todo item, regardless of its due date.
 - **FR-003**: The system MUST NOT display an overdue indicator on any todo item that has no due date.
-- **FR-004**: The overdue indicator MUST use the Danger colour from the design system and MUST include a non-colour cue (text label, icon, or both) so the indicator is accessible to colour-blind users.
+- **FR-004**: The overdue indicator MUST be a small text badge reading "Overdue", displayed near the due date, in the Danger colour from the design system. The text label itself is the non-colour cue, ensuring accessibility for colour-blind users.
 - **FR-005**: The overdue indicator MUST appear in both light and dark display modes, using the appropriate Danger colour token for each mode.
-- **FR-006**: The overdue status MUST be evaluated relative to the current date at page-load time — a todo that becomes overdue between sessions MUST appear overdue on the next page load.
+- **FR-006**: The overdue status MUST be derived reactively from `dueDate` and `isCompleted` on every render. A todo that becomes overdue between sessions MUST appear overdue on the next page load (minimum guarantee). Because evaluation happens on every render, no separate event handler is needed to update the indicator when status or date changes.
 - **FR-007**: When a user marks an overdue item as complete, the overdue indicator MUST disappear immediately without requiring a page reload.
 - **FR-008**: When a user updates the due date of an overdue item to a future date, the overdue indicator MUST disappear immediately without requiring a page reload.
 - **FR-009**: Overdue items MUST remain in their existing creation-date order within the list — no separate sorting, grouping, or filtering by overdue status is required.
@@ -94,6 +102,8 @@ A user who returns to the application on a later day sees that items which were 
 
 - "Today" is the calendar date in the user's local timezone as reported by the browser.
 - Overdue is defined as `dueDate < today` (exclusive — a todo due today is not yet overdue).
+- `dueDate` is stored and transmitted as an ISO 8601 date string (`YYYY-MM-DD`). The overdue comparison (`dueDate < today`) is performed against today's date formatted as the same `YYYY-MM-DD` string — no parsing library is required.
+- Overdue state is a pure derived value re-computed on every render from `dueDate` and `isCompleted`; it is never stored or cached.
 - No server-side overdue flag is stored; the state is computed client-side at render time using the existing `dueDate` field.
 - The existing `TodoCard` component is the correct place to apply the overdue visual treatment.
 - No notifications, alerts, or emails are in scope — only in-list visual distinction.
