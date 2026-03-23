@@ -106,6 +106,10 @@ function TodoCard({ todo, onToggle, onEdit, onDelete, isLoading }) {
     );
   }
 
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const isOverdue = !todo.completed && todo.dueDate && todo.dueDate < todayStr;
+
   return (
     <div className={`todo-card ${todo.completed ? 'completed' : ''}`}>
       <input
@@ -123,6 +127,9 @@ function TodoCard({ todo, onToggle, onEdit, onDelete, isLoading }) {
           <p className="todo-due-date">
             Due: {formatDate(todo.dueDate)}
           </p>
+        )}
+        {isOverdue && (
+          <span className="overdue-badge" aria-label="Overdue">Overdue</span>
         )}
       </div>
 

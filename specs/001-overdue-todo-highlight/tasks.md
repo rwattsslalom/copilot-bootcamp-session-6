@@ -25,7 +25,7 @@ exclusively through tests; no additional implementation code is needed beyond US
 
 **Purpose**: Verify the baseline test suite is green before any changes are made.
 
-- [ ] T001 Run existing frontend tests and confirm they all pass: `cd packages/frontend && npm test -- --watchAll=false`
+- [X] T001 Run existing frontend tests and confirm they all pass: `cd packages/frontend && npm test -- --watchAll=false`
 
 **Checkpoint**: All existing tests pass. Safe to begin implementation.
 
@@ -38,7 +38,7 @@ This must be done before the badge JSX is rendered in any user story.
 
 ⚠️ **CRITICAL**: No user story work can begin until T002 is complete.
 
-- [ ] T002 Add `.overdue-badge` CSS rule using design-system tokens to `packages/frontend/src/App.css`
+- [X] T002 Add `.overdue-badge` CSS rule using design-system tokens to `packages/frontend/src/App.css`
 
   ```css
   .overdue-badge {
@@ -66,12 +66,12 @@ This must be done before the badge JSX is rendered in any user story.
 
 ### Tests for User Story 1 ⚠️ Write FIRST — verify they FAIL before T005
 
-- [ ] T003 [US1] Write test "shows Overdue badge for incomplete todo with past due date" in `packages/frontend/src/components/__tests__/TodoCard.test.js` inside a new `describe('overdue indicator', ...)` block
-- [ ] T004 [US1] Write test "shows Overdue badge that disappears after todo is re-rendered as completed" in `packages/frontend/src/components/__tests__/TodoCard.test.js` (render once with `completed: 0`, re-render with `completed: 1`, assert badge absent)
+- [X] T003 [US1] Write test "shows Overdue badge for incomplete todo with past due date" in `packages/frontend/src/components/__tests__/TodoCard.test.js` inside a new `describe('overdue indicator', ...)` block
+- [X] T004 [US1] Write test "shows Overdue badge that disappears after todo is re-rendered as completed" in `packages/frontend/src/components/__tests__/TodoCard.test.js` (render once with `completed: 0`, re-render with `completed: 1`, assert badge absent)
 
 ### Implementation for User Story 1
 
-- [ ] T005 [US1] Add `isOverdue` derived boolean and `<span className="overdue-badge">` JSX to `packages/frontend/src/components/TodoCard.js` (depends on T003, T004 failing first)
+- [X] T005 [US1] Add `isOverdue` derived boolean and `<span className="overdue-badge">` JSX to `packages/frontend/src/components/TodoCard.js` (depends on T003, T004 failing first)
 
   Place before the `return` of the normal (non-editing) render path:
   ```javascript
@@ -101,12 +101,12 @@ No additional implementation code is required — the expression from T005 alrea
 
 ### Tests for User Story 2 ⚠️ Write FIRST — verify they FAIL (if T005 not yet implemented), then pass after T005
 
-- [ ] T006 [P] [US2] Write test "does NOT show badge for completed todo with past due date" in `packages/frontend/src/components/__tests__/TodoCard.test.js`
-- [ ] T007 [P] [US2] Write test "does NOT show badge for incomplete todo with no due date" in `packages/frontend/src/components/__tests__/TodoCard.test.js`
+- [X] T006 [P] [US2] Write test "does NOT show badge for completed todo with past due date" in `packages/frontend/src/components/__tests__/TodoCard.test.js`
+- [X] T007 [P] [US2] Write test "does NOT show badge for incomplete todo with no due date" in `packages/frontend/src/components/__tests__/TodoCard.test.js`
 
 ### Verification for User Story 2
 
-- [ ] T008 [US2] Confirm T006 and T007 pass with the `isOverdue` expression from T005 in `packages/frontend/src/components/TodoCard.js`. If any test fails, adjust the `isOverdue` expression to satisfy the truth table in `data-model.md`.
+- [X] T008 [US2] Confirm T006 and T007 pass with the `isOverdue` expression from T005 in `packages/frontend/src/components/TodoCard.js`. If any test fails, adjust the `isOverdue` expression to satisfy the truth table in `data-model.md`.
 
 **Checkpoint**: US2 passes. Zero false positives on completed or dateless items confirmed.
 
@@ -122,12 +122,12 @@ badge is absent. Render with `dueDate = '2020-01-01'` (always past) and assert b
 
 ### Tests for User Story 3 ⚠️ Write FIRST — verify they FAIL, then pass after T005
 
-- [ ] T009 [P] [US3] Write test "does NOT show badge when dueDate equals today's local date" in `packages/frontend/src/components/__tests__/TodoCard.test.js` (compute `todayStr` in the test using the same local-timezone logic, then assert `queryByText('Overdue')` is null)
-- [ ] T010 [P] [US3] Write test "shows badge for incomplete todo with reliably future past date 2020-01-01 (confirms page-load evaluation)" in `packages/frontend/src/components/__tests__/TodoCard.test.js`
+- [X] T009 [P] [US3] Write test "does NOT show badge when dueDate equals today's local date" in `packages/frontend/src/components/__tests__/TodoCard.test.js` (compute `todayStr` in the test using the same local-timezone logic, then assert `queryByText('Overdue')` is null)
+- [X] T010 [P] [US3] Write test "shows badge for incomplete todo with reliably future past date 2020-01-01 (confirms page-load evaluation)" in `packages/frontend/src/components/__tests__/TodoCard.test.js`
 
 ### Verification for User Story 3
 
-- [ ] T011 [US3] Confirm T009 and T010 pass. Verify `todayStr` in `TodoCard.js` uses `getFullYear/getMonth/getDate` (local timezone) not `toISOString()` (UTC) in `packages/frontend/src/components/TodoCard.js`. No code change expected; update if test T009 fails.
+- [X] T011 [US3] Confirm T009 and T010 pass. Verify `todayStr` in `TodoCard.js` uses `getFullYear/getMonth/getDate` (local timezone) not `toISOString()` (UTC) in `packages/frontend/src/components/TodoCard.js`. No code change expected; update if test T009 fails.
 
 **Checkpoint**: US3 passes. Temporal accuracy and strict less-than comparison confirmed.
 
@@ -135,8 +135,8 @@ badge is absent. Render with `dueDate = '2020-01-01'` (always past) and assert b
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T012 Run full frontend test suite with coverage and confirm ≥ 80% and all tests green: `cd packages/frontend && npm test -- --watchAll=false --coverage`
-- [ ] T013 [P] Manually verify badge displays in both light and dark modes by toggling the theme toggle in the running app (`npm run start`) and confirming the badge colour matches `--danger-color` per `packages/frontend/src/styles/theme.css`
+- [X] T012 Run full frontend test suite with coverage and confirm ≥ 80% and all tests green: `cd packages/frontend && npm test -- --watchAll=false --coverage`
+- [X] T013 [P] Manually verify badge displays in both light and dark modes by toggling the theme toggle in the running app (`npm run start`) and confirming the badge colour matches `--danger-color` per `packages/frontend/src/styles/theme.css`
 
 ---
 

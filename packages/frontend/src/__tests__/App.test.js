@@ -232,4 +232,84 @@ describe('App Component', () => {
     fireEvent.click(themToggleAfter);
     expect(localStorage.getItem('todoAppTheme')).toBe('light');
   });
+
+  test('restores saved theme from localStorage on load', async () => {
+    localStorageMock.setItem('todoAppTheme', 'dark');
+    render(<App />);
+    await waitFor(() => {
+      expect(screen.getByText('My Todos')).toBeInTheDocument();
+    });
+    expect(localStorage.getItem('todoAppTheme')).toBe('dark');
+  });
+
+  test('edits an existing todo', async () => {
+    render(<App />);
+    await waitFor(() => {
+      expect(screen.getByText('Learn React')).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByLabelText('Edit "Learn React"'));
+    const titleInput = screen.getByDisplayValue('Learn React');
+    fireEvent.change(titleInput, { target: { value: 'Learn React Updated' } });
+    fireEvent.click(screen.getByText('Save'));
+    await waitFor(() => {
+      expect(screen.getByText('Learn React Updated')).toBeInTheDocument();
+    });
+  });
+
+  test('shows delete confirmation dialog when delete button is clicked', async () => {
+    window.confirm = jest.fn(() => true);
+    render(<App />);
+    await waitFor(() => {
+      expect(screen.getByText('Learn React')).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByLabelText('Delete "Learn React"'));
+    await waitFor(() => {
+      expect(screen.getByText('Delete Todo?')).toBeInTheDocument();
+    });
+  });
+
+  test('cancels delete when Cancel is clicked in confirmation dialog', async () => {
+    window.confirm = jest.fn(() => true);
+    render(<App />);
+    await waitFor(() => {
+      expect(screen.getByText('Learn React')).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByLabelText('Delete "Learn React"'));
+    await waitFor(() => {
+      expect(screen.getByText('Delete Todo?')).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByText('Cancel'));
+    expect(screen.queryByText('Delete Todo?')).not.toBeInTheDocument();
+    expect(screen.getByText('Learn React')).toBeInTheDocument();
+  });
+
+  test('removes todo from list after confirming delete', async () => {
+    window.confirm = jest.fn(() => true);
+    render(<App />);
+    await waitFor(() => {
+      expect(screen.getByText('Learn React')).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByLabelText('Delete "Learn React"'));
+    await waitFor(() => {
+      expect(screen.getByText('Delete Todo?')).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByText('Confirm'));
+    await waitFor(() => {
+      expect(screen.queryByText('Learn React')).not.toBeInTheDocument();
+    });
+  });
+
+  test('dismisses error message when close button is clicked', async () => {
+    server.use(
+      rest.get('/api/todos', (req, res, ctx) => {
+        return res(ctx.status(500));
+      })
+    );
+    render(<App />);
+    await waitFor(() => {
+      expect(screen.getByText(/Failed to load todos/)).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByText('✕'));
+    expect(screen.queryByText(/Failed to load todos/)).not.toBeInTheDocument();
+  });
 });
